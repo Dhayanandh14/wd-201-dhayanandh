@@ -1,25 +1,16 @@
 require "active_record"
 
 class Todo < ActiveRecord::Base
-
-  # this method check todays date or not
-  def due_today?
-    due_date == Date.today
-  end
-
-  # check the due_date is less than today date or not
   def self.overdue
-    Todo.all.filter { |todo| todo.due_date < Date.today }
+    where("due_date < ?", Date.today)
   end
 
-  # check the due_date is same as today date or not
   def self.due_today
-    Todo.all.filter { |todo| todo.due_today? }
+    where("due_date = ?", Date.today)
   end
 
-  # check the due_date is greater than today date or not
   def self.due_later
-    Todo.all.filter { |todo| todo.due_date > Date.today }
+    where("due_date > ?", Date.today)
   end
 
   # this method adds a task
@@ -29,7 +20,7 @@ class Todo < ActiveRecord::Base
 
   def to_displayable_string
     display_status = completed ? "[X]" : "[ ]"
-    display_date = due_today? ? nil : due_date
+    display_date = (due_date == Date.today) ? nil : due_date
     "#{id}. #{display_status} #{todo_text} #{display_date}"
   end
 
@@ -46,8 +37,8 @@ class Todo < ActiveRecord::Base
     end
   end
 
-  def self.to_displayable_list(todos)
-    todos.map { |todo| todo.to_displayable_string }
+  def self.to_displayable_list
+    all.map { |todo| todo.to_displayable_string }
   end
 
   def self.show_list
@@ -55,17 +46,17 @@ class Todo < ActiveRecord::Base
 
     #displays the todo which are overdue
     puts "Overdue\n"
-    puts to_displayable_list(Todo.overdue)
+    puts overdue.to_displayable_list
     puts "\n\n"
 
     #displays the todo which are due_today
     puts "Due Today\n"
-    puts to_displayable_list(Todo.due_today)
+    puts due_today.to_displayable_list
     puts "\n\n"
 
     #displays the todo which are due_later
     puts "Due Later\n"
-    puts to_displayable_list(Todo.due_later)
+    puts due_later.to_displayable_list
     puts "\n\n"
   end
 end
