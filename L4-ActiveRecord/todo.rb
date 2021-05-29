@@ -30,7 +30,7 @@ class Todo < ActiveRecord::Base
   def to_displayable_string
     display_status = completed ? "[X]" : "[ ]"
     display_date = due_today? ? nil : due_date
-    "#{id} #{display_status} #{todo_text} #{display_date}"
+    "#{id}. #{display_status} #{todo_text} #{display_date}"
   end
 
   #given a todo id this method marks a todo as complete
